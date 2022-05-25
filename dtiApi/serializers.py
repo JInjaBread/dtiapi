@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from .models import Products,ProductCategory, Concern
+from .models import Products,ProductCategory, Concern, Data
 
 class ConcernSerializers(serializers.ModelSerializer):
     receipt_image = Base64ImageField()

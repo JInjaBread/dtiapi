@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body id="page-top">
+  <div id="wrapper">
+      {% include "sidenav.html" %}
+      <div class="d-flex flex-column" id="content-wrapper">
+          <div id="content">
+              {% include "navbar.html" %}
+              <div class="container-fluid">
+                  <h3 class="text-dark mb-1">Complains</h3>
+              </div>
+              {% for complains in complains %}
+                <div class="gift row">
+                    <div class="gift__img col-sm-3 col-12"><img src="{{ complains.receipt_image }}"></div>
+                    <div class="gift__info col-sm-9 col-12">
+                        <a href = "mailto: {{complains.complainant_email}}"><h4 class="gift__name">{{ complains.complainant_email }}</h4></a>
+                        <div class="gift__details">
+                            <p>{{ complains.complains }}</p>
+                        </div>
+                        <div class="gift__details">
+                            <p>{{ complains.publish_at }}</p>
+                        </div>
+                    </div>
+                </div>
+              {% endfor %}
+          </div>
+          <footer class="bg-white sticky-footer">
+              <div class="container my-auto">
+                  <div class="text-center my-auto copyright"><span>Copyright © Brand 2022</span></div>
+              </div>
+          </footer>
+      </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+  </div>
+</body>
+{% endblock %}

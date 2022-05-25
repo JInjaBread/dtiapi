@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-t0smx*0#^vyvc=u97#$oux3)(g$w)(#fmb@xqi&s%xw&i(&h^f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -118,8 +118,6 @@ AUTHENTICATION_BACKENDS = ['dtiApi.EmailBackend.EmailBackEnd']
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES":(),

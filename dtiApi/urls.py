@@ -8,6 +8,7 @@ urlpatterns = [
     path('api/products/primecommodities', views.getProductsPrime),
     path('api/products/concern', views.getConcern),
     path('api/products/complaints', views.sendConcern),
+    path('api/pdf', views.getPDF),
     #path('products/category', views.passCategory)
 
     #For Generics

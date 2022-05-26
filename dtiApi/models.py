@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class ProductCategory(models.Model):
     category_name = models.CharField(max_length=255)
@@ -33,4 +33,4 @@ class Concern(models.Model):
 
 class Data(models.Model):
     data_file = models.FileField(upload_to='pdf/')
-    publish_at = models.DateField(auto_now_add=True)
+    publish_at = models.DateTimeField(default=timezone.now)

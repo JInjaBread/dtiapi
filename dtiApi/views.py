@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.permissions import AllowAny
 from .models import Products, Concern, ProductCategory, Data
 from rest_framework.parsers import MultiPartParser, FormParser
-from .serializers import ProductSerializer, ConcernSerializers
+from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
 from .resource import ProductResource
 from tablib import Dataset
 
@@ -37,6 +37,14 @@ def getConcern(request):
     serializer = ConcernSerializers(concern, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def getPDF(request):
+    data_pdf = Data.objects.all().order_by('-publish_at')
+    serializer = DataSerializer(data_pdf, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
 @parser_classes([FormParser])
@@ -65,12 +73,10 @@ def doLogin(request):
             login(request, user)
             #return HttpResponse("Email: "+request.POST.get('email')+ " Password: "+request.POST.get('password'))
             if user.is_superuser == True:
-                print('authenticated')
                 return redirect('dashboard')
 
         else:
             messages.error(request, "Invalid Login Credentials!")
-            #return HttpResponseRedirect("/")
             return redirect('home')
 
 def logout_user(request):

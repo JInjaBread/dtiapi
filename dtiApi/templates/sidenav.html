@@ -33,7 +33,13 @@
                 <span>Complains</span>
               </a>
             </li>
-            <li class="nav-item"></li>
+            <li class="nav-item">
+              {% url 'categories' as categories %}
+              <a class="nav-link {% if request.path == categories %} active {% endif %}" href="{{ categories }}">
+                <i class="fa fa-list-alt"></i>
+                <span>Complains</span>
+              </a>
+            </li>
         </ul>
         <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
     </div>

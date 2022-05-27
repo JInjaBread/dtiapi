@@ -214,3 +214,24 @@ def data_save(request):
     except:
         print('error')
         return redirect('data')
+
+def categories(request):
+
+    categories = ProductCategory.objects.all()
+
+    context = {
+        "categories": categories
+    }
+    return render(request, "categories.html", context)
+
+def categories_save(request):
+    category = request.POST.get('product_category')
+
+    try:
+        pc = ProductCategory(category_name=category)
+        pc.save()
+        print('saved')
+        return redirect('categories')
+    except:
+        print('error')
+        return redirect('categories')

@@ -23,6 +23,7 @@ urlpatterns = [
     path('delete_product/<product_id>', views.delete_products, name='delete'),
     path('complains', views.complains, name='complains'),
     path('data', views.data, name='data'),
-    path('data_save', views.data_save, name='data_save')
-
+    path('data_save', views.data_save, name='data_save'),
+    path('categories', views.categories, name='categories'),
+    path('categories_save', views.categories_save, name='categories_save')
 ]

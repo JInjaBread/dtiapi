@@ -1,4 +1,3 @@
-from knox import views as knox_views
 from django.urls import path
 from . import views
 

@@ -11,8 +11,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
 from .resource import ProductResource
 from tablib import Dataset
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from knox.views import LoginView as KnoxLoginView
+
 
 from .EmailBackend import EmailBackEnd
 

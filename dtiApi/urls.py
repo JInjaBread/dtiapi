@@ -1,3 +1,4 @@
+from knox import views as knox_views
 from django.urls import path
 from . import views
 
@@ -9,6 +10,8 @@ urlpatterns = [
     path('api/products/concern', views.getConcern),
     path('api/products/complaints', views.sendConcern),
     path('api/pdf', views.getPDF),
+    path('api/login', views.api_login),
+    path('api/current_user', views.current_user),
     #path('products/category', views.passCategory)
 
     #For Generics
@@ -25,5 +28,7 @@ urlpatterns = [
     path('data', views.data, name='data'),
     path('data_save', views.data_save, name='data_save'),
     path('categories', views.categories, name='categories'),
-    path('categories_save', views.categories_save, name='categories_save')
+    path('categories_save', views.categories_save, name='categories_save'),
+    path('accounts', views.accounts, name='accounts'),
+    path('save_account', views.save_account, name='save_account'),
 ]

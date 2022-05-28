@@ -1,15 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
-from rest_framework.permissions import AllowAny
+from rest_framework import permissions
 from .models import Products, Concern, ProductCategory, Data
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
 from .resource import ProductResource
 from tablib import Dataset
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
 
 from .EmailBackend import EmailBackEnd
 
@@ -58,6 +61,30 @@ def sendConcern(request):
         print(serializer.errors)
         return Response(serializer.errors)
 
+@api_view(['POST'])
+def api_login(request):
+    data = request.data
+    try:
+        email = data['email']
+        password = data['password']
+        user = EmailBackEnd.authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            global current_email
+            current_email = email
+            return Response("Validated")
+        else:
+            return Response("Failed")
+    except Exception as e:
+        print(e)
+        return Response("Invalid Credentials")
+
+@api_view(['GET'])
+def current_user(request):
+    user = request.user
+    return Response({
+        'email': current_email,
+})
 
 #generics views
 
@@ -74,9 +101,9 @@ def doLogin(request):
             #return HttpResponse("Email: "+request.POST.get('email')+ " Password: "+request.POST.get('password'))
             if user.is_superuser == True:
                 return redirect('dashboard')
-
+            else:
+                return redirect('home')
         else:
-            messages.error(request, "Invalid Login Credentials!")
             return redirect('home')
 
 def logout_user(request):
@@ -142,10 +169,16 @@ def add_products_resource(request):
         try:
             imported_data = dataset.load(data_object.read(), format='xlsx')
             for data in imported_data:
-                category = ProductCategory.objects.get(category_name=data[6])
-                print(data[2])
-                product = Products(product_name=data[0], prooduct_price=data[1], product_image=data[2], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
-                product.save()
+                check = Products.objects.filter(product_name = data[0], product_unit=data[3]).exists()
+                if check == False:
+                    category = ProductCategory.objects.get(category_name=data[6])
+                    print(data[2])
+                    product = Products(product_name=data[0], prooduct_price=data[1], product_image=data[2], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
+                    product.save()
+                else:
+                    product = Products.objects.get(product_name = data[0], product_unit=data[3])
+                    product.prooduct_price = data[1]
+                    product.save()
             print('Saved')
             return redirect('products')
         except Exception as e:
@@ -235,3 +268,25 @@ def categories_save(request):
     except:
         print('error')
         return redirect('categories')
+
+def accounts(request):
+    staff = User.objects.filter(is_staff=True)
+    context = {
+        "staff": staff
+    }
+    return render(request, "accounts.html", context)
+
+def save_account(request):
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+
+    try:
+        user = User.objects.create_user(username, email, password)
+        user.is_staff = True
+        user.save()
+        print("Saved")
+        return redirect('accounts')
+    except:
+        print("Error")
+        return redirect('accounts')

@@ -37,7 +37,14 @@
               {% url 'categories' as categories %}
               <a class="nav-link {% if request.path == categories %} active {% endif %}" href="{{ categories }}">
                 <i class="fa fa-list-alt"></i>
-                <span>Complains</span>
+                <span>Categories</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              {% url 'accounts' as accounts %}
+              <a class="nav-link {% if request.path == accounts %} active {% endif %}" href="{{ accounts }}">
+                <i class="fa-light fa-store"></i>
+                <span>Store Accounts</span>
               </a>
             </li>
         </ul>

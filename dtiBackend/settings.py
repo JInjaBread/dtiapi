@@ -30,9 +30,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dtiApi',
     'rest_framework',
+    'knox',
     'corsheaders',
     'drf_extra_fields',
-    'import_export'
+    'import_export',
+
 ]
 
 MIDDLEWARE = [

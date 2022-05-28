@@ -21,6 +21,9 @@ class Products(models.Model):
     main_category = models.CharField(max_length=255, choices=MAIN_CATEGORY)
     product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name="category")
 
+    class Meta:
+        unique_together = ('product_name', 'product_unit',)
+
     def __str__(self):
         return self.product_name
 

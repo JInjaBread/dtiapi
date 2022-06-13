@@ -176,9 +176,7 @@ def add_products_resource(request):
                 check = Products.objects.filter(product_name = data[0], product_unit=data[3]).exists()
                 if check == False:
                     category = ProductCategory.objects.get(category_name=data[6])
-                    print(data[2])
-                    product = Products(product_name=data[0], prooduct_price=data[1], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
-                    product.product_image = data[2]
+                    product = Products(product_name=data[0], supermarket_price=data[1], wetmarket_price=data[2], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
                     product.save()
                 else:
                     product = Products.objects.get(product_name = data[0], product_unit=data[3])

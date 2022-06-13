@@ -7,7 +7,7 @@ class ConcernSerializers(serializers.ModelSerializer):
     receipt_image = Base64ImageField()
     class Meta:
         model = Concern
-        fields= ('product_id','receipt_image','complainant_email', 'complains')
+        fields= ('receipt_image','complainant_email', 'complains')
 
 class ProductSerializer(serializers.ModelSerializer):
     concern = ConcernSerializers(many=True, read_only=True)

@@ -10,7 +10,6 @@ from django.core.mail import send_mail
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework import permissions
-from validate_email import validate_email
 from .models import Products, Concern, ProductCategory, Data
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer

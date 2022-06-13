@@ -14,7 +14,8 @@ class Products(models.Model):
         ('PRIME COMMODITIES', 'PRIME COMMODITIES'),
     ]
     product_name = models.CharField(max_length=255)
-    prooduct_price = models.FloatField()
+    supermarket_price = models.FloatField()
+    wetmarket_price = models.FloatField()
     product_image = models.ImageField(upload_to ='images/')
     product_unit = models.CharField(max_length=255)
     product_description = models.CharField(max_length=255)
@@ -28,11 +29,11 @@ class Products(models.Model):
         return self.product_name
 
 class Concern(models.Model):
-    product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     receipt_image = models.ImageField(upload_to='complains/')
     complainant_email = models.CharField(max_length=255)
     complains = models.CharField(max_length=255)
-    publish_at = models.DateField(auto_now_add=True)
+    concern_adress = models.BooleanField(default = False)
+    publish_at = models.DateTimeField(auto_now_add=True)
 
 class Data(models.Model):
     data_file = models.FileField(upload_to='pdf/')

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'dtiApi',
     'rest_framework',
     'corsheaders',
@@ -143,3 +144,11 @@ CSRF_COOKIE_SECURE = False
 SECURE_HSTS_SECONDS = None
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_FRAME_DENY = False
+
+#smtp
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'examplefordti@gmail.com'
+EMAIL_HOST_PASSWORD = 'mhtlqkzcquehgjtq'

@@ -1,11 +1,16 @@
+import requests
+import json
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework import permissions
+from validate_email import validate_email
 from .models import Products, Concern, ProductCategory, Data
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
@@ -167,12 +172,14 @@ def add_products_resource(request):
     if data_object.name.endswith('xlsx'):
         try:
             imported_data = dataset.load(data_object.read(), format='xlsx')
+            print(imported_data)
             for data in imported_data:
                 check = Products.objects.filter(product_name = data[0], product_unit=data[3]).exists()
                 if check == False:
                     category = ProductCategory.objects.get(category_name=data[6])
                     print(data[2])
-                    product = Products(product_name=data[0], prooduct_price=data[1], product_image=data[2], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
+                    product = Products(product_name=data[0], prooduct_price=data[1], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
+                    product.product_image = data[2]
                     product.save()
                 else:
                     product = Products.objects.get(product_name = data[0], product_unit=data[3])
@@ -196,28 +203,70 @@ def delete_products(request, product_id):
         print('failed to delete')
         return redirect('products')
 
-def update_price(request, product_id):
+def update_image(request, product_id):
 
-    product_price = request.POST.get('price')
+    if len(request.FILES) != 0:
+        product_image = request.FILES['product_image']
+        fs = FileSystemStorage()
+        filename = fs.save(product_image.name, product_image)
+        product_image_url = fs.url(filename)
+    else:
+        product_image_url = None
 
     try:
         product = Products.objects.get(id=product_id)
-        product.prooduct_price = product_price
+        product.product_image = product_image_url
         product.save()
-        print('Updated')
+        messages.success(request, "Product Image Upload Succesfully!")
         return redirect('products')
     except Exception as e:
         print(e)
+        messages.error(request, "Product Image Upload Failed!")
         return redirect('products')
 
 def complains(request):
     complains = Concern.objects.all()
 
+    complains_unreplied = Concern.objects.filter(concern_adress=False)
+
+    complains_replied = Concern.objects.filter(concern_adress=True)
+
     context = {
-        "complains": complains
+        "complains": complains,
+        "complains_unreplied": complains_unreplied,
+        "complains_replied": complains_replied
     }
 
     return render(request, "complains.html", context)
+
+def address_complains(request, complains_id):
+    complains = Concern.objects.get(id=complains_id)
+
+    store = User.objects.get(email=complains.complainant_email)
+    context = {
+        "complains": complains,
+        "store": store
+    }
+
+    return render(request, "address_complains.html", context)
+
+def address_complains_send(request, complains_id):
+    complains = Concern.objects.get(id=complains_id)
+    subject = request.POST.get('subject')
+    message = request.POST.get('messages')
+    email = request.POST.get('email')
+
+    try:
+        send_mail(
+            subject,message,'examplefordti@gmail.com',[email]
+        )
+        complains.concern_adress = True
+        complains.save()
+        print("Sent Succesfully")
+        return redirect('/address_complains/' + str(complains.id))
+    except:
+        print("Error")
+        return redirect('/address_complains/' + str(complains.id))
 
 def data(request):
 
@@ -241,7 +290,6 @@ def data_save(request):
     try:
         data = Data(data_file=data_file_url)
         data.save()
-        print('saved')
         return redirect('data')
     except:
         print('error')
@@ -269,7 +317,17 @@ def categories_save(request):
         return redirect('categories')
 
 def accounts(request):
-    staff = User.objects.filter(is_staff=True)
+    staff_user = User.objects.filter(is_staff=True)
+
+    staff = []
+
+    for staff_user in staff_user:
+        check = User.objects.get(id=staff_user.id)
+        if check.is_superuser == False:
+            staff.append(check)
+        else:
+            pass
+
     context = {
         "staff": staff
     }
@@ -280,12 +338,29 @@ def save_account(request):
     email = request.POST.get('email')
     password = request.POST.get('password')
 
-    try:
-        user = User.objects.create_user(username, email, password)
-        user.is_staff = True
-        user.save()
-        print("Saved")
-        return redirect('accounts')
-    except:
-        print("Error")
+    url = "https://api.apilayer.com/email_verification/check?email=" + email
+
+    payload = {}
+    headers= {
+      "apikey": "ApvDrCuwpz8hiq3RWg2lrw9xpmcwM3Iv"
+    }
+
+    response = requests.request("GET", url, headers=headers, data = payload)
+
+    status_code = response.status_code
+    result = response.json()
+    smtp_check = result["smtp_check"]
+
+    if smtp_check == True:
+        try:
+            user = User.objects.create_user(username, email, password)
+            user.is_staff = True
+            user.save()
+            messages.success(request, "User save succesfully!")
+            return redirect('accounts')
+        except:
+            messages.error(request, "Email Already Exist!")
+            return redirect('accounts')
+    else:
+        messages.error(request, "Email Is Not Valid!")
         return redirect('accounts')

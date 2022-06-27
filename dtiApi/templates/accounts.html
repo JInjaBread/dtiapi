@@ -50,6 +50,7 @@
                                       <tr>
                                           <th>Store Name</th>
                                           <th>Email</th>
+                                          <th>Action</th>
                                       </tr>
                                   </thead>
                                   <tbody>
@@ -57,6 +58,7 @@
                                       <tr>
                                         <td>{{ staff.username }}</td>
                                         <td>{{ staff.email }}</td>
+                                        <td><div class="col-6"><a class="btn btn-light btn-block" type="button" href="{% url 'delete_account' staff.id %}"><i class="fa fa-trash" style="font-size: 28px;color: rgb(255,0,0);"></i></a></div></td>
                                       </tr>
                                     {% endfor %}
                                       <tr></tr>
@@ -72,6 +74,7 @@
                                       <tr>
                                         <th><strong>Store Name</strong></th>
                                         <th><strong>Email</strong></th>
+                                        <th><strong>Action</strong></th>
                                       </tr>
                                   </tfoot>
                               </table>

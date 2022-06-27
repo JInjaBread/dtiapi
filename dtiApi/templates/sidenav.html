@@ -20,13 +20,6 @@
               </a>
             </li>
             <li class="nav-item">
-              {% url 'data' as data %}
-              <a class="nav-link {% if request.path == data %} active {% endif %}" href="{{ data }}">
-                <i class="fas fa-table"></i>
-                <span>Data</span>
-              </a>
-          </li>
-            <li class="nav-item">
               {% url 'complains' as complains %}
               <a class="nav-link {% if request.path == complains %} active {% endif %}" href="{{ complains }}">
                 <i class="fa fa-comment"></i>
@@ -34,16 +27,9 @@
               </a>
             </li>
             <li class="nav-item">
-              {% url 'categories' as categories %}
-              <a class="nav-link {% if request.path == categories %} active {% endif %}" href="{{ categories }}">
-                <i class="fa fa-list-alt"></i>
-                <span>Categories</span>
-              </a>
-            </li>
-            <li class="nav-item">
               {% url 'accounts' as accounts %}
               <a class="nav-link {% if request.path == accounts %} active {% endif %}" href="{{ accounts }}">
-                <i class="fa-light fa-store"></i>
+                <i class="fa fa-user"></i>
                 <span>Store Accounts</span>
               </a>
             </li>

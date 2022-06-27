@@ -1,16 +1,19 @@
 import requests
 import json
+import datetime
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.utils import timezone
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework import permissions
-from .models import Products, Concern, ProductCategory, Data
+from .models import Products, Concern, Data
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
 from .resource import ProductResource
@@ -125,19 +128,30 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 def products(request):
-    products = Products.objects.all()
-    category = ProductCategory.objects.all()
 
+    products =[]
+
+    if 'table_search' in request.GET:
+        table_search = request.GET['table_search']
+        q = Q(product_name__icontains=table_search)
+        products_data = Products.objects.filter(q)
+        if products_data.count() == 0:
+            messages.error(request, "No Data Found!")
+            print("NO DATA FOUND")
+        else:
+            for product in products_data:
+                products.append(product)
+    else:
+        products_data = Products.objects.all()
+        for product in products_data:
+            products.append(product)
     context = {
         "products": products,
-        "category": category
     }
     return render(request, "products.html", context)
 
 
 def add_products(request):
-
-
     category = request.POST.get('product_category')
     product_name = request.POST.get('product_name')
     product_price = request.POST.get('product_price')
@@ -168,25 +182,47 @@ def add_products_resource(request):
     dataset = Dataset()
     data_object = request.FILES["resource"]
 
+    message = 'As of ' + str(datetime.datetime.now()) + ' dti app updated its prices you may now view updated prices in the app'
+
+    staff_user = User.objects.filter(is_staff=True)
+
+    staff = []
+
+    for staff_user in staff_user:
+        check = User.objects.get(id=staff_user.id)
+        if check.is_superuser == False:
+            staff.append(check)
+        else:
+            pass
+
     if data_object.name.endswith('xlsx'):
         try:
             imported_data = dataset.load(data_object.read(), format='xlsx')
             print(imported_data)
             for data in imported_data:
-                check = Products.objects.filter(product_name = data[0], product_unit=data[3]).exists()
+                check = Products.objects.filter(product_name = data[0], product_unit=data[4]).exists()
                 if check == False:
-                    category = ProductCategory.objects.get(category_name=data[6])
-                    product = Products(product_name=data[0], supermarket_price=data[1], wetmarket_price=data[2], product_unit=data[3], product_description=data[4], main_category=data[5], product_category=category)
+                    product = Products(product_name=data[0], product_srp=data[1],supermarket_price=data[2], wetmarket_price=data[3], product_unit=data[4], product_description=data[5], main_category=data[6], product_category=data[7])
                     product.save()
                 else:
-                    product = Products.objects.get(product_name = data[0], product_unit=data[3])
-                    product.prooduct_price = data[1]
+                    product = Products.objects.get(product_name = data[0], product_unit=data[4])
+                    product.product_srp = data[1]
+                    product.supermarket_price = data[2]
+                    product.wetmarket_price = data[3]
+                    product.as_of = datetime.datetime.now()
                     product.save()
-            print('Saved')
+            for staff in staff:
+                send_mail(
+                    'DTI APP PRICES UPDATE',message,'examplefordti@gmail.com',[staff.email]
+                )
+            messages.success(request, "Add/Update of products success!")
             return redirect('products')
-        except Exception as e:
-                print(e)
+        except:
+                messages.error(request, "Error please check your resource file!")
                 return redirect('products')
+    else:
+        messages.error(request, "Error please check your resource file!")
+        return redirect('products')
 
 
 def delete_products(request, product_id):
@@ -259,10 +295,10 @@ def address_complains_send(request, complains_id):
         )
         complains.concern_adress = True
         complains.save()
-        print("Sent Succesfully")
+        messages.success(request, "Reply Sent")
         return redirect('/address_complains/' + str(complains.id))
     except:
-        print("Error")
+        messages.error(request, "Please Complete the Form!")
         return redirect('/address_complains/' + str(complains.id))
 
 def data(request):
@@ -360,4 +396,15 @@ def save_account(request):
             return redirect('accounts')
     else:
         messages.error(request, "Email Is Not Valid!")
+        return redirect('accounts')
+
+def delete_account(request, store_id):
+    staff_user = User.objects.get(id = store_id)
+
+    try:
+        staff_user.delete()
+        messages.success(request, "Store succesfully deleted!")
+        return redirect('accounts')
+    except:
+        messages.error(request, "Unsucessfull Deeletion of Account!")
         return redirect('accounts')

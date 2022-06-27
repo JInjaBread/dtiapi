@@ -1,12 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-class ProductCategory(models.Model):
-    category_name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.category_name
-
 class Products(models.Model):
 
     MAIN_CATEGORY = [
@@ -14,13 +8,15 @@ class Products(models.Model):
         ('PRIME COMMODITIES', 'PRIME COMMODITIES'),
     ]
     product_name = models.CharField(max_length=255)
+    product_srp = models.FloatField()
     supermarket_price = models.FloatField()
     wetmarket_price = models.FloatField()
     product_image = models.ImageField(upload_to ='images/')
     product_unit = models.CharField(max_length=255)
     product_description = models.CharField(max_length=255)
     main_category = models.CharField(max_length=255, choices=MAIN_CATEGORY)
-    product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name="category")
+    product_category = models.CharField(max_length=255)
+    as_of = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('product_name', 'product_unit',)

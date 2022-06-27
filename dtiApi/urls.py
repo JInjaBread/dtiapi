@@ -32,4 +32,5 @@ urlpatterns = [
     path('categories_save', views.categories_save, name='categories_save'),
     path('accounts', views.accounts, name='accounts'),
     path('save_account', views.save_account, name='save_account'),
+    path('delete_account/<store_id>', views.delete_account, name='delete_account'),
 ]

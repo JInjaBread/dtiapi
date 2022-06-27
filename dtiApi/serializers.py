@@ -1,6 +1,6 @@
 from rest_framework import serializers, permissions
 from drf_extra_fields.fields import Base64ImageField
-from .models import Products,ProductCategory, Concern, Data
+from .models import Products, Concern, Data
 
 
 class ConcernSerializers(serializers.ModelSerializer):
@@ -14,13 +14,6 @@ class ProductSerializer(serializers.ModelSerializer):
     main_category = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = Products
-        fields = '__all__'
-
-class ProductCategorySerealizers(serializers.ModelSerializer):
-    product = ProductSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = ProductCategory
         fields = '__all__'
 
 class DataSerializer(serializers.ModelSerializer):

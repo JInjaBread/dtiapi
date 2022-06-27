@@ -17,7 +17,7 @@ DEBUG = True
 
 
 CORS_ORIGIN_ALLOW_ALL = True
-ALLOWED_HOSTS = ['dtiapp.herokuapp.com', '192.168.1.181']
+ALLOWED_HOSTS = ['dtiapp.herokuapp.com', '192.168.1.181', '127.0.0.1']
 
 # Application definition
 

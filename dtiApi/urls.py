@@ -1,9 +1,10 @@
 from django.urls import path
 from . import views
+from .views import ProductsListView
 
 urlpatterns = [
     #for api
-    path('api/products', views.getData),
+    path('api/products', ProductsListView.as_view()),
     path('api/products/basicnecessities', views.getProductsBasic),
     path('api/products/primecommodities', views.getProductsPrime),
     path('api/products/concern', views.getConcern),

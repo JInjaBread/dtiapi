@@ -12,7 +12,8 @@ from django.utils import timezone
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
-from rest_framework import permissions
+from rest_framework import permissions, generics, filters
+import django_filters.rest_framework
 from .models import Products, Concern, Data
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
@@ -22,11 +23,11 @@ from tablib import Dataset
 
 from .EmailBackend import EmailBackEnd
 
-@api_view(['GET'])
-def getData(request):
-    products = Products.objects.all()
-    serializer = ProductSerializer(products, many=True)
-    return Response(serializer.data)
+class ProductsListView(generics.ListCreateAPIView):
+    search_fields = ['product_name']
+    filter_backends = (filters.SearchFilter,)
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
 
 @api_view(['GET'])
 def getProductsBasic(request):

@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'dtiApi',
+    'django_filters',
     'rest_framework',
     'corsheaders',
     'drf_extra_fields',
@@ -126,6 +127,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES":(),
     "DEFAULT_PERMISSION_CLASSES": (),
     "UPLOADED_FILES_USE_URL": False,
+    "DEFAULT_FILTER_BACKENDS": ['django_filters.rest_framework.DjangoFilterBackend'],
 
 }
 #CORS_ALLOW_ALL_ORIGINS = False

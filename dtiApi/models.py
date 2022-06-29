@@ -8,15 +8,13 @@ class Products(models.Model):
         ('PRIME COMMODITIES', 'PRIME COMMODITIES'),
     ]
     product_name = models.CharField(max_length=255)
-    product_srp = models.FloatField()
-    supermarket_price = models.FloatField()
-    wetmarket_price = models.FloatField()
+    product_srp = models.FloatField(default=0.0, null=True)
+    supermarket_price = models.FloatField(default=0.0, null=True)
+    wetmarket_price = models.FloatField(default=0.0, null=True)
     product_image = models.ImageField(upload_to ='images/')
     product_unit = models.CharField(max_length=255)
-    product_description = models.CharField(max_length=255)
     main_category = models.CharField(max_length=255, choices=MAIN_CATEGORY)
-    product_category = models.CharField(max_length=255)
-    as_of = models.DateTimeField(default=timezone.now)
+    as_of = models.DateField()
 
     class Meta:
         unique_together = ('product_name', 'product_unit',)

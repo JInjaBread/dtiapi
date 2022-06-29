@@ -58,14 +58,26 @@
                                     <div class="col-4"><a class="small-text" href="#">{{ product.product_unit }}</a></div>
                                 </div>
                                 <div class="product-rating">
-                                    <h5>SRP:  ₱ {{ product.product_srp }}</h5>
-                                    <h5>Super Market:  ₱ {{ product.supermarket_price }}</h5>
-                                    <h5>Wet Market:  ₱ {{ product.wetmarket_price }}</h5>
+                                    {% if product.product_srp == None %}
+                                      <h5>SRP:  ₱ 0.0</h5>
+                                    {% else %}
+                                      <h5>SRP:  ₱ {{ product.product_srp }}</h5>
+                                    {% endif %}
+                                    {% if product.supermarket_price == None %}
+                                      <h5>SRP:  ₱ 0.0</h5>
+                                    {% else %}
+                                        <h5>Super Market:  ₱ {{ product.supermarket_price }}</h5>
+                                    {% endif %}
+                                    {% if product.wetmarket_price == None %}
+                                      <h5>SRP:  ₱ 0.0</h5>
+                                    {% else %}
+                                      <h5>Wet Market:  ₱ {{ product.wetmarket_price }}</h5>
+                                    {% endif %}
+
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <p class="product-description">{{ product.main_category }}</p>
-                                        <p class="product-description">{{ product.product_category }}</p>
                                         <p class="product-description">As of: {{ product.as_of }}</p>
                                         <div class="row">
                                             <div class="col-6"><button class="btn btn-light btn-block" type="button" data-toggle="modal" data-target="#update-modal{{ product.id }}"><i class="fa fa-edit" style="font-size: 28px;color: rgb(255,255,0);"></i></button></div>

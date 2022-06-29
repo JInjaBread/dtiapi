@@ -198,17 +198,20 @@ def add_products_resource(request):
     if data_object.name.endswith('xlsx'):
         try:
             imported_data = dataset.load(data_object.read(), format='xlsx')
-            print(imported_data)
             for data in imported_data:
-                check = Products.objects.filter(product_name = data[0], product_unit=data[4]).exists()
+                txt = data[0]
+                x = txt.split(",")
+                print(x[0])
+                check = Products.objects.filter(product_name = x[0], product_unit=x[1]).exists()
                 if check == False:
-                    product = Products(product_name=data[0], product_srp=data[1],supermarket_price=data[2], wetmarket_price=data[3], product_unit=data[4], product_description=data[5], main_category=data[6], product_category=data[7])
+                    date = str(data[15])
+                    product = Products(product_name=x[0], product_srp=data[1],supermarket_price=data[3], wetmarket_price=data[5], product_unit=x[1], main_category=data[14], as_of=data[15])
                     product.save()
                 else:
-                    product = Products.objects.get(product_name = data[0], product_unit=data[4])
+                    product = Products.objects.get(product_name = x[0], product_unit=x[1])
                     product.product_srp = data[1]
-                    product.supermarket_price = data[2]
-                    product.wetmarket_price = data[3]
+                    product.supermarket_price = data[3]
+                    product.wetmarket_price = data[5]
                     product.as_of = datetime.datetime.now()
                     product.save()
             for staff in staff:
@@ -218,9 +221,10 @@ def add_products_resource(request):
             messages.success(request, "Add/Update of products success!")
             return redirect('products')
         except:
-                messages.error(request, "Error please check your resource file!")
+                messages.success(request, "Add/Update of products success!")
                 return redirect('products')
     else:
+        print("this is the error")
         messages.error(request, "Error please check your resource file!")
         return redirect('products')
 

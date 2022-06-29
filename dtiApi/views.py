@@ -20,7 +20,6 @@ from .serializers import ProductSerializer, ConcernSerializers, DataSerializer
 from .resource import ProductResource
 from tablib import Dataset
 
-
 from .EmailBackend import EmailBackEnd
 
 class ProductsListView(generics.ListCreateAPIView):
